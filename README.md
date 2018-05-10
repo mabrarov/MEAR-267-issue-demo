@@ -1,5 +1,19 @@
 MEAR-267
 =====================
+SCENARIO
+mvn clean package
+
+EXPECTED
+Manifest inside the com.leokom-MEAR-267-ejb-1.0-SNAPSHOT.jar contains a correct class-path
+
+ACTUALLY
+Class-Path: guava-19.0.jar
+Actual lib: com.google.guava-guava-19.0.jar 
+
+Thus the project cannot be boot correctly in an environment that requires the manifest classpath being correct.
+
+
+below: the original readme
 
 What is it?
 -----------
