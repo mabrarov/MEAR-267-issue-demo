@@ -89,7 +89,7 @@
                	<manifest>
                		<addClasspath>true</addClasspath>
                     <classpathLayoutType>custom</classpathLayoutType>
-                    <customClasspathLayout>$${artifact.groupId}-$${artifact.artifactId}-$${artifact.baseVersion}$${dashClassifier?}.$${artifact.extension}</customClasspathLayout>
+                    <customClasspathLayout>lib/$${artifact.groupId}-$${artifact.artifactId}-$${artifact.baseVersion}$${dashClassifier?}.$${artifact.extension}</customClasspathLayout>
                	</manifest>
                </archive>
             </configuration>
