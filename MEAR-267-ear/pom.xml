@@ -14,6 +14,11 @@
 
    <name>MEAR-267 EAR module</name>
 
+   <properties>
+      <wildfly.version>20.0.1.Final</wildfly.version>
+      <jboss.home>${project.build.directory}/wildfly-${wildfly.version}</jboss.home>
+   </properties>
+
    <dependencies>
 
       <!-- Depend on the ejb module and war so that we can package them -->
@@ -27,11 +32,63 @@
          <artifactId>MEAR-267-ejb</artifactId>
          <type>ejb</type>
       </dependency>
+
+      <!-- Integration test dependency -->
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.arquillian.junit</groupId>
+         <artifactId>arquillian-junit-container</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.wildfly.arquillian</groupId>
+         <artifactId>wildfly-arquillian-container-managed</artifactId>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
 
    <build>
       <finalName>MEAR-267</finalName>
       <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>test-compile</id>
+                  <goals>
+                     <goal>testCompile</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>test-resources</id>
+                  <goals>
+                     <goal>testResources</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>test-jar</id>
+                  <goals>
+                     <goal>test-jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-ear-plugin</artifactId>
@@ -55,6 +112,55 @@
                </modules>
             </configuration>
          </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>pre-integration-test</phase>
+                  <id>unpack-wildfly</id>
+                  <goals>
+                     <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                     <artifactItems>
+                        <artifactItem>
+                           <groupId>org.wildfly</groupId>
+                           <artifactId>wildfly-dist</artifactId>
+                           <version>${wildfly.version}</version>
+                           <type>tar.gz</type>
+                           <outputDirectory>${project.build.directory}</outputDirectory>
+                        </artifactItem>
+                     </artifactItems>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+               <systemPropertyVariables>
+                  <arquillian.launch>wildfly-managed</arquillian.launch>
+                  <arquillian.testJar>${project.build.directory}/${project.build.finalName}-tests.jar</arquillian.testJar>
+                  <arquillian.testEar>${project.build.directory}/${project.build.finalName}.ear</arquillian.testEar>
+               </systemPropertyVariables>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>integration-test</id>
+                  <goals>
+                     <goal>integration-test</goal>
+                  </goals>
+               </execution>
+               <execution>
+                  <id>verify</id>
+                  <goals>
+                     <goal>verify</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
          <!-- The JBoss AS plugin deploys your ear to a local JBoss AS container -->
          <!-- Due to Maven's lack of intelligence with EARs we need to configure 
             the jboss-as maven plugin to skip deployment for all modules. We then enable 
@@ -67,6 +173,13 @@
             </configuration>
          </plugin>
       </plugins>
+
+      <testResources>
+         <testResource>
+            <directory>src/test/resources</directory>
+            <filtering>true</filtering>
+         </testResource>
+      </testResources>
    </build>
 
 </project>
