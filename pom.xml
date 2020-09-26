@@ -116,7 +116,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-resources-plugin</artifactId>
-               <version>3.2.0</version>
+               <version>3.1.0</version>
             </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
@@ -131,7 +131,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-failsafe-plugin</artifactId>
-               <version>3.0.0-M5</version>
+               <version>2.22.2</version>
             </plugin>
             <!-- The JBoss AS plugin deploys your ear to a local JBoss AS
                container -->
