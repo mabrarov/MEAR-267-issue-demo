@@ -15,8 +15,8 @@
    <name>MEAR-267 EAR module</name>
 
    <properties>
-      <wildfly.version>20.0.1.Final</wildfly.version>
-      <jboss.home>${project.build.directory}/wildfly-${wildfly.version}</jboss.home>
+      <jboss.java.home>${java.home}</jboss.java.home>
+      <jboss.home>${project.build.directory}/jboss-as-${jboss.version}</jboss.home>
    </properties>
 
    <dependencies>
@@ -44,8 +44,13 @@
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.wildfly.arquillian</groupId>
-         <artifactId>wildfly-arquillian-container-managed</artifactId>
+         <groupId>org.jboss.arquillian.protocol</groupId>
+         <artifactId>arquillian-protocol-servlet</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.as</groupId>
+         <artifactId>jboss-as-arquillian-container-managed</artifactId>
          <scope>test</scope>
       </dependency>
    </dependencies>
@@ -118,17 +123,17 @@
             <executions>
                <execution>
                   <phase>pre-integration-test</phase>
-                  <id>unpack-wildfly</id>
+                  <id>unpack-jboss</id>
                   <goals>
                      <goal>unpack</goal>
                   </goals>
                   <configuration>
                      <artifactItems>
                         <artifactItem>
-                           <groupId>org.wildfly</groupId>
-                           <artifactId>wildfly-dist</artifactId>
-                           <version>${wildfly.version}</version>
-                           <type>tar.gz</type>
+                           <groupId>org.jboss.as</groupId>
+                           <artifactId>jboss-as-dist</artifactId>
+                           <version>${jboss.version}</version>
+                           <type>zip</type>
                            <outputDirectory>${project.build.directory}</outputDirectory>
                         </artifactItem>
                      </artifactItems>
@@ -141,7 +146,7 @@
             <artifactId>maven-failsafe-plugin</artifactId>
             <configuration>
                <systemPropertyVariables>
-                  <arquillian.launch>wildfly-managed</arquillian.launch>
+                  <arquillian.launch>jboss-managed</arquillian.launch>
                   <arquillian.testJar>${project.build.directory}/${project.build.finalName}-tests.jar</arquillian.testJar>
                   <arquillian.testEar>${project.build.directory}/${project.build.finalName}.ear</arquillian.testEar>
                </systemPropertyVariables>

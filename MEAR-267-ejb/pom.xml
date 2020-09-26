@@ -166,7 +166,6 @@
             <dependency>
                <groupId>org.jboss.as</groupId>
                <artifactId>jboss-as-arquillian-container-managed</artifactId>
-               <version>7.0.2.Final</version>
                <scope>test</scope>
             </dependency>
          </dependencies>
