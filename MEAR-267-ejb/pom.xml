@@ -86,11 +86,9 @@
                <!-- Tell Maven we are using EJB 3.1 -->
                <ejbVersion>3.1</ejbVersion>
                <archive>
-               	<manifest>
-               		<addClasspath>true</addClasspath>
-                    <classpathLayoutType>custom</classpathLayoutType>
-                    <customClasspathLayout>lib/$${artifact.groupId}-$${artifact.artifactId}-$${artifact.baseVersion}$${dashClassifier?}.$${artifact.extension}</customClasspathLayout>
-               	</manifest>
+                  <manifest>
+                     <addClasspath>true</addClasspath>
+                  </manifest>
                </archive>
             </configuration>
          </plugin>
