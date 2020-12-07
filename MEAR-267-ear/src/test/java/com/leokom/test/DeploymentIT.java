@@ -21,10 +21,15 @@ public class DeploymentIT {
 
   @Deployment
   public static Archive<?> createTestArchive() {
+    final Logger log = Logger.getLogger(DeploymentIT.class.getName());
+    final String testJarName = System.getProperty("arquillian.testJar");
+    log.info("Loading test JAR from " + testJarName);
     final JavaArchive testJar = ShrinkWrap.createFromZipFile(JavaArchive.class,
-        new File(System.getProperty("arquillian.testJar")));
+        new File(testJarName));
+    final String testEarName = System.getProperty("arquillian.testEar");
+    log.info("Loading test EAR from " + testEarName);
     final EnterpriseArchive testEar = ShrinkWrap.createFromZipFile(EnterpriseArchive.class,
-        new File(System.getProperty("arquillian.testEar")));
+        new File(testEarName));
     return testEar.addAsLibraries(testJar);
   }
 

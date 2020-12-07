@@ -15,8 +15,9 @@
    <name>MEAR-267 EAR module</name>
 
    <properties>
-      <wildfly.version>20.0.1.Final</wildfly.version>
-      <jboss.home>${project.build.directory}/wildfly-${wildfly.version}</jboss.home>
+      <wildfly.dir.name>wildfly</wildfly.dir.name>
+      <wildfly-dist.dir>wildfly-${wildfly.version}</wildfly-dist.dir>
+      <jboss.home>${project.build.directory}/${wildfly.dir.name}/${wildfly-dist.dir}</jboss.home>
    </properties>
 
    <dependencies>
@@ -34,6 +35,12 @@
       </dependency>
 
       <!-- Integration test dependency -->
+      <dependency>
+         <groupId>org.wildfly</groupId>
+         <artifactId>wildfly-dist</artifactId>
+         <type>tar.gz</type>
+         <scope>test</scope>
+      </dependency>
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
@@ -112,25 +119,80 @@
             </configuration>
          </plugin>
          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>generate-test-resources</phase>
+                  <id>reserve-wildfly-http-port</id>
+                  <goals>
+                     <goal>reserve-network-port</goal>
+                  </goals>
+                  <configuration>
+                     <randomPort>true</randomPort>
+                     <portNames>
+                        <portName>jboss.http.port</portName>
+                     </portNames>
+                  </configuration>
+               </execution>
+               <execution>
+                  <phase>generate-test-resources</phase>
+                  <id>reserve-wildfly-management-port</id>
+                  <goals>
+                     <goal>reserve-network-port</goal>
+                  </goals>
+                  <configuration>
+                     <randomPort>true</randomPort>
+                     <portNames>
+                        <portName>jboss.management.http.port</portName>
+                     </portNames>
+                  </configuration>
+               </execution>
+               <execution>
+                  <phase>generate-test-resources</phase>
+                  <id>reserve-wildfly-txn-recovery-environment-port</id>
+                  <goals>
+                     <goal>reserve-network-port</goal>
+                  </goals>
+                  <configuration>
+                     <randomPort>true</randomPort>
+                     <portNames>
+                        <portName>jboss.txn-recovery-environment.port</portName>
+                     </portNames>
+                  </configuration>
+               </execution>
+               <execution>
+                  <phase>generate-test-resources</phase>
+                  <id>reserve-wildfly-txn-status-manager-port</id>
+                  <goals>
+                     <goal>reserve-network-port</goal>
+                  </goals>
+                  <configuration>
+                     <randomPort>true</randomPort>
+                     <portNames>
+                        <portName>jboss.txn-status-manager.port</portName>
+                     </portNames>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
+            <artifactId>maven-assembly-plugin</artifactId>
             <executions>
                <execution>
                   <phase>pre-integration-test</phase>
-                  <id>unpack-wildfly</id>
+                  <id>deploy-wildfly</id>
                   <goals>
-                     <goal>unpack</goal>
+                     <goal>single</goal>
                   </goals>
                   <configuration>
-                     <artifactItems>
-                        <artifactItem>
-                           <groupId>org.wildfly</groupId>
-                           <artifactId>wildfly-dist</artifactId>
-                           <version>${wildfly.version}</version>
-                           <type>tar.gz</type>
-                           <outputDirectory>${project.build.directory}</outputDirectory>
-                        </artifactItem>
-                     </artifactItems>
+                     <finalName>${wildfly.dir.name}</finalName>
+                     <appendAssemblyId>false</appendAssemblyId>
+                     <attach>false</attach>
+                     <descriptors>
+                        <descriptor>src/assembly/wildfly.xml</descriptor>
+                     </descriptors>
                   </configuration>
                </execution>
             </executions>
@@ -140,6 +202,7 @@
             <artifactId>maven-failsafe-plugin</artifactId>
             <configuration>
                <systemPropertyVariables>
+                  <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
                   <arquillian.launch>wildfly-managed</arquillian.launch>
                   <arquillian.testJar>${project.build.directory}/${project.build.finalName}-tests.jar</arquillian.testJar>
                   <arquillian.testEar>${project.build.directory}/${project.build.finalName}.ear</arquillian.testEar>
