@@ -26,6 +26,17 @@
       <!-- Declare the APIs we depend on and need for compilation. All of 
          them are provided by JBoss AS 7 -->
 
+      <dependency>
+         <groupId>org.jboss.spec.javax.xml.bind</groupId>
+         <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.spec.javax.annotation</groupId>
+         <artifactId>jboss-annotations-api_1.1_spec</artifactId>
+         <scope>provided</scope>
+      </dependency>
+
       <!-- Import the EJB API, we use provided scope as the API is included 
          in JBoss AS 7 -->
       <dependency>
